@@ -1,4 +1,4 @@
-from .hw9 import *
+from hw9 import *
 
 __author__ = 'Jen Yu, Sammy Shaker, Arun Chakravorty'
 __email__ = 'jenyu@caltech.edu'

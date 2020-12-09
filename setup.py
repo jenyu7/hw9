@@ -10,9 +10,9 @@ setuptools.setup(
     author_email='jenyu@caltech.edu',
     description='Packaged code for BE/Bi103a HW9',
     long_description=long_description,
-    long_description_content_type='ext/markdown',
+    long_description_content_type='text/markdown',
     packages=setuptools.find_packages(),
-    install_requires=["numpy","pandas", "bokeh>=1.4.0", "scipy.stats", "scipy.optimize", "numba", "bebi103", "iqplot", "colorcet", 
+    install_requires=["numpy","pandas", "bokeh>=1.4.0", "scipy", "numba", "bebi103", "iqplot", "colorcet", 
     "holoviews", "tqdm"],
     classifiers=(
         "Programming Language :: Python :: 3",
