@@ -21,8 +21,10 @@ import reps
 
 import colorcet
 
-import bokeh.io
+import bokeh.io 
+from bokeh.layouts import column
 import holoviews as hv
+from bokeh.plotting import figure, output_file, save
 
 def _load_data(): 
     fname = os.path.join(data_path, "gardner_mt_catastrophe_only_tubulin.csv")
@@ -51,17 +53,23 @@ def cat_conc_ecdf(df):
         ptiles = [2.5, 97.5],
         show_legend = True
     )     
-    bokeh.io.show(p)
+    return p
     
 def cat_conc_stripbox(df): 
+    unlabeled1 = iqplot.stripbox(
+            data = df, 
+            q  = 'time to catastrophe (s)',
+            cats = ['concentration'],
+            show_legend = True,
+            jitter=0.3,
+    )
     unlabeled2 = iqplot.stripbox(
         data = df, 
         q  = 'time to catastrophe (s)',
         cats = ['concentration'],
         show_legend = True
     )
-
-    bokeh.io.show(unlabeled2)
+    return unlabeled1, unlabeled2
     
 def mle_gamma(conc): 
     return mle.mle_iid_gamma(concentration(conc))
@@ -119,15 +127,22 @@ def _clean_summaries(concentrations):
     
 def show_beta_alpha(concentrations): 
     reps, summaries_alpha, summaries_beta = _clean_summaries(concentrations)
-    bokeh.io.show(bebi103.viz.confints(summaries_beta, x_axis_label='Beta', y_axis_label='Concentration'))
-    bokeh.io.show(bebi103.viz.confints(summaries_alpha, x_axis_label='Alpha', y_axis_label='Concentration'))
+    p1 = bebi103.viz.confints(summaries_beta, x_axis_label='Beta', y_axis_label='Concentration')
+    p2 = bebi103.viz.confints(summaries_alpha, x_axis_label='Alpha', y_axis_label='Concentration')
+    return p1, p2
         
     
 
 if __name__ == "__main__":
     df = _clean_data(_load_data())
-    cat_conc_ecdf(df)
-    cat_conc_stripbox(df)
+    a = cat_conc_ecdf(df)
+    b, c = cat_conc_stripbox(df)
     print(_clean_mle_data(12))
-    show_beta_alpha([7, 9, 10, 12, 14])
+    d, e = show_beta_alpha([7, 9, 10, 12, 14])
+    exploratory = column(a, b, c)
+    output_file("exploratory.html")
+    save(exploratory)
+    CI = column(d, e)
+    output_file("CI.html")
+    save(CI)
     
