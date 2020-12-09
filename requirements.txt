@@ -1,0 +1,8 @@
+numpy
+scipy
+pandas
+bokeh>=1.4.0
+iqplot
+bebi103
+holoviews
+colorcet

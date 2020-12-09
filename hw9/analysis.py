@@ -12,7 +12,6 @@ import warnings
 import numpy as np
 import pandas as pd
 
-import numba
 from tqdm import tqdm
 import bebi103
 
