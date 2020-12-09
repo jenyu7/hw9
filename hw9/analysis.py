@@ -31,7 +31,7 @@ def _load_data():
     df = pd.read_csv(fname, comment="#")
     return df
     
-def _clean_data(df): 
+def clean_data(df): 
     df = pd.melt(df).dropna().reset_index(drop=True)
     df = df.rename(columns={"variable": "concentration", "value":"time to catastrophe (s)"})
     splitter = lambda s: int(s.split(" ")[0])
@@ -134,15 +134,12 @@ def show_beta_alpha(concentrations):
     
 
 if __name__ == "__main__":
-    df = _clean_data(_load_data())
+    df = clean_data(_load_data())
     a = cat_conc_ecdf(df)
     b, c = cat_conc_stripbox(df)
-    print(_clean_mle_data(12))
+    print(clean_mle_data(12))
     d, e = show_beta_alpha([7, 9, 10, 12, 14])
-    exploratory = column(a, b, c)
-    output_file("exploratory.html")
-    save(exploratory)
-    CI = column(d, e)
-    output_file("CI.html")
-    save(CI)
+    final = column(a, b, c, d, e)
+    output_file("final.html")
+    save(final)
     
