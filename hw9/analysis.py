@@ -73,16 +73,16 @@ def cat_conc_stripbox(df):
     return unlabeled1, unlabeled2
 
 def mle_gamma(conc,df):
-    return mle.mle_iid_gamma(concentration(conc,df))
+    return hw9.mle.mle_iid_gamma(concentration(conc,df))
 
 def mle_bespoke(conc,df):
-    return mle.mle_iid_bespoke(concentration(conc,df))
+    return hw9.mle.mle_iid_bespoke(concentration(conc,df))
 
 def _clean_mle_data(conc,df):
     gmle = mle_gamma(conc,df)
     bmle = mle_bespoke(conc,df)
-    glog = mle.log_like_iid_gamma(gmle, concentration(conc,df))
-    blog = mle.log_like_iid_bespoke(bmle, concentration(conc,df))
+    glog = hw9.mle.log_like_iid_gamma(gmle, concentration(conc,df))
+    blog = hw9.mle.log_like_iid_bespoke(bmle, concentration(conc,df))
     mle_df = pd.DataFrame(index=['beta1', 'dbeta', 'beta', 'alpha', 'log_like_gamma',
                              'log_like_bespoke', 'AIC_gamma','AIC_bespoke'],
                              data=np.array([bmle[0], bmle[1], gmle[0], gmle[1], glog, blog, 0, 0]))
@@ -99,7 +99,7 @@ def _clean_mle_data(conc,df):
 def reps_and_conf(conc,df):
     c = concentration(conc,df)
     bs_reps_parametric = reps.draw_parametric_bs_reps_mle(
-        mle.mle_iid_gamma,
+        hw9.mle.mle_iid_gamma,
         reps.sp_gamma,
         c,
         args=(),
@@ -114,7 +114,7 @@ def _clean_summaries(concentrations,df):
     summaries_beta = []
     treps = []
     for c in concentrations:
-        tmle = mle.mle_iid_gamma(concentration(c,df))
+        tmle = hw9.mle.mle_iid_gamma(concentration(c,df))
         tbs_reps, tconf_int = reps_and_conf(c,df)
         l = "{}uM".format(c)
         summaries_beta.append(dict(label=l,
