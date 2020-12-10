@@ -40,7 +40,7 @@ def clean_data(df):
     df = df.sort_values("ints")
     return df
 
-def concentration(conc):
+def concentration(conc,df):
     c = "{} uM".format(conc)
     return df.loc[df['concentration'] == c].values[:,1].astype('float64')
 
@@ -72,17 +72,17 @@ def cat_conc_stripbox(df):
     )
     return unlabeled1, unlabeled2
 
-def mle_gamma(conc):
-    return mle.mle_iid_gamma(concentration(conc))
+def mle_gamma(conc,df):
+    return mle.mle_iid_gamma(concentration(conc,df))
 
-def mle_bespoke(conc):
-    return mle.mle_iid_bespoke(concentration(conc))
+def mle_bespoke(conc,df):
+    return mle.mle_iid_bespoke(concentration(conc,df))
 
-def _clean_mle_data(conc):
-    gmle = mle_gamma(conc)
-    bmle = mle_bespoke(conc)
-    glog = mle.log_like_iid_gamma(gmle, concentration(conc))
-    blog = mle.log_like_iid_bespoke(bmle, concentration(conc))
+def _clean_mle_data(conc,df):
+    gmle = mle_gamma(conc,df)
+    bmle = mle_bespoke(conc,df)
+    glog = mle.log_like_iid_gamma(gmle, concentration(conc,df))
+    blog = mle.log_like_iid_bespoke(bmle, concentration(conc,df))
     mle_df = pd.DataFrame(index=['beta1', 'dbeta', 'beta', 'alpha', 'log_like_gamma',
                              'log_like_bespoke', 'AIC_gamma','AIC_bespoke'],
                              data=np.array([bmle[0], bmle[1], gmle[0], gmle[1], glog, blog, 0, 0]))
@@ -96,8 +96,8 @@ def _clean_mle_data(conc):
     mle_df['weight_bespoke'] = numerator/denominator
     return mle_df.T
 
-def reps_and_conf(conc):
-    c = concentration(conc)
+def reps_and_conf(conc,df):
+    c = concentration(conc,df)
     bs_reps_parametric = reps.draw_parametric_bs_reps_mle(
         mle.mle_iid_gamma,
         reps.sp_gamma,
@@ -109,13 +109,13 @@ def reps_and_conf(conc):
     conf_int = np.percentile(bs_reps_parametric, [2.5, 97.5], axis=0)
     return bs_reps_parametric, conf_int
 
-def _clean_summaries(concentrations):
+def _clean_summaries(concentrations,df):
     summaries_alpha = []
     summaries_beta = []
     treps = []
     for c in concentrations:
-        tmle = mle.mle_iid_gamma(concentration(c))
-        tbs_reps, tconf_int = reps_and_conf(c)
+        tmle = mle.mle_iid_gamma(concentration(c,df))
+        tbs_reps, tconf_int = reps_and_conf(c,df)
         l = "{}uM".format(c)
         summaries_beta.append(dict(label=l,
                          estimate = tmle[0]
@@ -126,8 +126,8 @@ def _clean_summaries(concentrations):
         treps.append(tbs_reps)
     return treps, summaries_alpha, summaries_beta
 
-def show_beta_alpha(concentrations):
-    reps, summaries_alpha, summaries_beta = _clean_summaries(concentrations)
+def show_beta_alpha(concentrations,df):
+    reps, summaries_alpha, summaries_beta = _clean_summaries(concentrations,df)
     p1 = bebi103.viz.confints(summaries_beta, x_axis_label='Beta', y_axis_label='Concentration')
     p2 = bebi103.viz.confints(summaries_alpha, x_axis_label='Alpha', y_axis_label='Concentration')
     return p1, p2
