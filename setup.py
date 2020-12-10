@@ -12,7 +12,9 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=setuptools.find_packages(),
-    install_requires=["numpy","pandas", "bokeh>=1.4.0", "scipy", "numba", "bebi103", "iqplot", "colorcet", 
+    include_package_data=True,
+    package_data={'': ['data/*.csv']},
+    install_requires=["numpy","pandas", "bokeh>=1.4.0", "scipy", "numba", "bebi103", "iqplot", "colorcet",
     "holoviews", "tqdm"],
     classifiers=(
         "Programming Language :: Python :: 3",
