@@ -26,7 +26,7 @@ from bokeh.layouts import column
 import holoviews as hv
 from bokeh.plotting import figure, output_file, save
 
-def _load_data(): 
+def load_data(): 
     fname = os.path.join(data_path, "gardner_mt_catastrophe_only_tubulin.csv")
     df = pd.read_csv(fname, comment="#")
     return df
@@ -134,7 +134,7 @@ def show_beta_alpha(concentrations):
     
 
 if __name__ == "__main__":
-    df = clean_data(_load_data())
+    df = clean_data(load_data())
     a = cat_conc_ecdf(df)
     b, c = cat_conc_stripbox(df)
     print(clean_mle_data(12))
